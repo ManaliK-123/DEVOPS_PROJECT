@@ -11,7 +11,7 @@
 | **TASK 3** | Requirements, Architecture & Technology | ✅ Completed | `docs/TASK3_ARCHITECTURE_SRS.md`, `pom.xml`, Spring Boot backend |
 | **TASK 4** | Git/GitHub Initialization | ✅ Completed | Git repo initialized, `.gitignore`, `README.md`, issue templates |
 | **TASK 5** | Feature Branch Workflow | ✅ Completed | Branch `feature/ride-management`, commit history, simulated PR & merge |
-| **TASK 6** | MVP Completion & Git Collaboration | ⏳ Pending Branch Integration | Awaiting feature PR review on main |
+| **TASK 6** | MVP Completion & Git Collaboration | ✅ Completed | Merge conflict resolved, feature merged, Tag `v1.0.0-mvp` created |
 | **TASK 7** | Jenkins CI | ✅ Completed | Jenkins CI pipeline config, unit & integration test automated runs |
 | **TASK 8** | Pipeline as Code & Deployment | ✅ Completed | `Jenkinsfile` (checkout -> build -> test -> package -> deploy), WAR/JAR deployment |
 | **TASK 9** | Selenium Testing | ✅ Completed | `src/test/java/.../selenium/` suite, automated screenshots, HTML/JUnit reports |
