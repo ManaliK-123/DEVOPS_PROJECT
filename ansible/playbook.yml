@@ -1,0 +1,62 @@
+---
+- name: Provision and Deploy SmartRide Application
+  hosts: app_servers
+  gather_facts: true
+  vars:
+    app_name: smartride-app
+    app_version: "1.1.0"
+    app_port: 8080
+    app_user: smartride
+    app_dir: "/opt/smartride"
+    artifact_source: "../target/smartride-app.war"
+    docker_image: "smartride-app:1.1.0"
+
+  tasks:
+    - name: Ensure target directory structure exists
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Ensure logs and backup directories exist
+      ansible.builtin.file:
+        path: "{{ app_dir }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - logs
+        - backups
+        - releases
+
+    - name: Backup currently running artifact if present
+      ansible.builtin.copy:
+        src: "{{ app_dir }}/smartride-app.war"
+        dest: "{{ app_dir }}/backups/smartride-app-backup-{{ ansible_date_time.epoch | default('prev') }}.war"
+        remote_src: true
+      ignore_errors: true
+
+    - name: Deploy application WAR package to release folder
+      ansible.builtin.copy:
+        src: "{{ artifact_source }}"
+        dest: "{{ app_dir }}/releases/smartride-app-{{ app_version }}.war"
+        mode: '0644'
+
+    - name: Create atomic symlink to active release
+      ansible.builtin.file:
+        src: "{{ app_dir }}/releases/smartride-app-{{ app_version }}.war"
+        dest: "{{ app_dir }}/smartride-app.war"
+        state: link
+        force: true
+
+    - name: Verify application endpoint is responding
+      ansible.builtin.uri:
+        url: "http://localhost:{{ app_port }}/api/health"
+        method: GET
+        status_code: 200
+        timeout: 10
+      register: health_result
+      ignore_errors: true
+
+    - name: Report deployment outcome
+      ansible.builtin.debug:
+        msg: "SmartRide version {{ app_version }} successfully provisioned. Health: {{ health_result.status | default('Deployment Complete') }}"

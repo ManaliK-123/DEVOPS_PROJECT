@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRide — Automated Ride-Sharing Platform</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%200%22%20100%22%20100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation Header -->
+        <header class="navbar">
+            <a href="/" class="brand" id="brandLogo">
+                <div class="brand-icon">🚗</div>
+                <span>SmartRide<span style="color: var(--accent-cyan);">.ai</span></span>
+            </a>
+
+            <!-- Role Selector Tabs -->
+            <nav class="nav-tabs" role="tablist">
+                <button class="nav-tab-btn active" id="tabPassenger" data-role="passenger" role="tab">Passenger Hub</button>
+                <button class="nav-tab-btn" id="tabDriver" data-role="driver" role="tab">Driver Operations</button>
+                <button class="nav-tab-btn" id="tabAdmin" data-role="admin" role="tab">Admin Analytics</button>
+            </nav>
+
+            <div class="nav-actions">
+                <div class="health-badge" id="systemHealthBadge">
+                    <span class="pulse-dot"></span>
+                    <span id="healthStatusText">SYSTEM ACTIVE</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="btnResetSeed" onclick="resetSeedData()">🔄 Reset Demo Data</button>
+            </div>
+        </header>
+
+        <!-- ================= PASSENGER VIEW ================= -->
+        <main id="passenger-section" class="view-section">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 24px;">
+                
+                <!-- Ride Request Card -->
+                <section class="card" id="bookingCard">
+                    <h2 class="card-title">
+                        <span>📍 Request a Smart Ride</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Instant Matching</span>
+                    </h2>
+
+                    <form id="rideBookingForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="passengerName">Passenger Name</label>
+                                <input type="text" id="passengerName" class="form-input" placeholder="e.g. Maya Lin" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="passengerPhone">Contact Phone</label>
+                                <input type="text" id="passengerPhone" class="form-input" placeholder="+1-555-0199" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="sourceLocation">Pickup Source</label>
+                                <input type="text" id="sourceLocation" class="form-input" placeholder="e.g. Metro Innovation Hub" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="destinationLocation">Destination</label>
+                                <input type="text" id="destinationLocation" class="form-input" placeholder="e.g. Downtown Financial Center" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="vehicleType">Vehicle Preference</label>
+                                <select id="vehicleType" class="form-select">
+                                    <option th:each="v : ${vehicleTypes}" th:value="${v.name()}" th:text="${v.displayName}">Sedan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="requestedSeats">Seats Required</label>
+                                <select id="requestedSeats" class="form-select">
+                                    <option value="1">1 Passenger</option>
+                                    <option value="2">2 Passengers</option>
+                                    <option value="3">3 Passengers</option>
+                                    <option value="4">4 Passengers</option>
+                                    <option value="6">6 Passengers (SUV only)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+                            <div>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">Estimated Fare:</span>
+                                <strong id="fareEstimateBadge" style="font-size: 1.3rem; color: var(--accent-emerald); margin-left: 6px;">$0.00</strong>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btnSubmitRide">⚡ Confirm & Request Ride</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Smart Recommendations Widget -->
+                <section class="card" id="recommendationsCard">
+                    <h2 class="card-title">
+                        <span>✨ Smart Ride-Share Recommendations</span>
+                        <span style="font-size: 0.8rem; background: rgba(37,99,235,0.2); color: #60a5fa; padding: 2px 8px; border-radius: 4px;">Rule-Engine Matched</span>
+                    </h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">Compatible departure schedules and corridors to save up to 30% on your trip.</p>
+                    <div id="recommendationsList">
+                        <!-- Loaded dynamically via app.js -->
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Passenger Active Bookings -->
+            <section class="card">
+                <h2 class="card-title">
+                    <span>📋 Live Ride Feed & Bookings</span>
+                    <button class="btn btn-secondary btn-sm" onclick="loadRides()">🔄 Refresh</button>
+                </h2>
+                <div id="passengerRidesList">
+                    <!-- Loaded dynamically via app.js -->
+                </div>
+            </section>
+        </main>
+
+        <!-- ================= DRIVER VIEW ================= -->
+        <main id="driver-section" class="view-section" style="display: none;">
+            <div class="card" style="margin-bottom: 24px; padding: 16px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.5rem;">🚖</span>
+                        <div>
+                            <div style="font-weight: 700;">Driver Duty Console</div>
+                            <small class="text-muted">Select active driver identity to accept trips</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="driverSelect" class="form-label" style="margin: 0;">Active Driver:</label>
+                        <select id="driverSelect" class="form-select" style="width: auto;">
+                            <option value="Marcus Vance">Marcus Vance (SUV-8820-T)</option>
+                            <option value="David Miller">David Miller (EV-9021-X)</option>
+                            <option value="Carlos Santos">Carlos Santos (HB-3301-C)</option>
+                            <option value="Sarah Connor">Sarah Connor (SD-1104-M)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px;">
+                <!-- Open Requests Feed -->
+                <section class="card">
+                    <h2 class="card-title">
+                        <span>📢 Available Pickup Requests</span>
+                        <span class="badge badge-REQUESTED">OPEN QUEUE</span>
+                    </h2>
+                    <div id="driverAvailableList">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </section>
+
+                <!-- Active In-Progress Trips -->
+                <section class="card">
+                    <h2 class="card-title">
+                        <span>🛣️ My Active Dispatches</span>
+                        <span class="badge badge-ONGOING">IN-PROGRESS</span>
+                    </h2>
+                    <div id="driverActiveList">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- ================= ADMIN VIEW ================= -->
+        <main id="admin-section" class="view-section" style="display: none;">
+            <!-- KPI Counters -->
+            <section class="kpi-grid">
+                <div class="kpi-card kpi-blue">
+                    <span class="kpi-label">Total Rides Logged</span>
+                    <span class="kpi-value" id="metricTotalRides">0</span>
+                </div>
+                <div class="kpi-card kpi-amber">
+                    <span class="kpi-label">Active / Ongoing</span>
+                    <span class="kpi-value" id="metricActiveRides">0</span>
+                </div>
+                <div class="kpi-card kpi-emerald">
+                    <span class="kpi-label">Completed Trips</span>
+                    <span class="kpi-value" id="metricCompletedRides">0</span>
+                </div>
+                <div class="kpi-card kpi-rose">
+                    <span class="kpi-label">Cancelled</span>
+                    <span class="kpi-value" id="metricCancelledRides">0</span>
+                </div>
+                <div class="kpi-card kpi-purple">
+                    <span class="kpi-label">Fleet Utilization</span>
+                    <span class="kpi-value" id="metricUtilization">0%</span>
+                </div>
+            </section>
+
+            <!-- Table Card -->
+            <section class="card">
+                <div class="card-title" style="flex-wrap: wrap; gap: 12px;">
+                    <span>📊 Platform Ride Audit & Management</span>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input type="text" id="adminSearchInput" class="form-input" placeholder="Search passenger / route..." style="padding: 6px 12px; width: 220px;">
+                        <select id="adminStatusFilter" class="form-select" style="padding: 6px 12px; width: auto;">
+                            <option value="ALL">All Statuses</option>
+                            <option value="REQUESTED">REQUESTED</option>
+                            <option value="ACCEPTED">ACCEPTED</option>
+                            <option value="DRIVER_ASSIGNED">DRIVER_ASSIGNED</option>
+                            <option value="ONGOING">ONGOING</option>
+                            <option value="COMPLETED">COMPLETED</option>
+                            <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="custom-table" id="adminRidesTable">
+                        <thead>
+                            <tr>
+                                <th>Ride ID</th>
+                                <th>Passenger</th>
+                                <th>Corridor (Origin ➔ Destination)</th>
+                                <th>Vehicle</th>
+                                <th>Fare</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRidesTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Audit Timeline Modal -->
+    <div class="modal" id="auditModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAuditModal()">&times;</button>
+            <h3 id="auditModalTitle" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 8px;">Activity & Audit Trail</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Immutable chronological log of status transitions and operator dispatch actions.</p>
+            <div id="auditTimelineContainer">
+                <!-- Timeline items -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

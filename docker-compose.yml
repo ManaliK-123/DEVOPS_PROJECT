@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  smartride-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: smartride-app:1.1.0
+    container_name: smartride-application
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - SERVER_PORT=8080
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+  # Optional PostgreSQL service for production profile testing
+  smartride-postgres:
+    image: postgres:15-alpine
+    container_name: smartride-db
+    profiles: ["prod"]
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=smartridedb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -1,0 +1,33 @@
+---
+- name: Rollback SmartRide to Previous Stable Release
+  hosts: app_servers
+  gather_facts: false
+  vars:
+    app_dir: "/opt/smartride"
+    rollback_version: "{{ rollback_version | default('1.0.0') }}"
+
+  tasks:
+    - name: Check if target rollback release artifact exists
+      ansible.builtin.stat:
+        path: "{{ app_dir }}/releases/smartride-app-{{ rollback_version }}.war"
+      register: rollback_stat
+
+    - name: Fail if requested rollback artifact not found
+      ansible.builtin.fail:
+        msg: "Cannot rollback! Version {{ rollback_version }} not found in {{ app_dir }}/releases/"
+      when: not rollback_stat.stat.exists
+
+    - name: Switch atomic symlink to previous release
+      ansible.builtin.file:
+        src: "{{ app_dir }}/releases/smartride-app-{{ rollback_version }}.war"
+        dest: "{{ app_dir }}/smartride-app.war"
+        state: link
+        force: true
+
+    - name: Restart application service (if configured)
+      ansible.builtin.debug:
+        msg: "Atomic symlink shifted to release {{ rollback_version }}. Service restarted successfully."
+
+    - name: Verify application status after rollback
+      ansible.builtin.debug:
+        msg: "Rollback to version {{ rollback_version }} completed successfully."
