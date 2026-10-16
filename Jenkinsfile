@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        JAVA_HOME = tool name: 'JDK17', type: 'jdk'
+        JAVA_HOME = tool name: 'JDK21', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven3', type: 'maven'
         PATH = "${env.MAVEN_HOME}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
         DOCKER_REGISTRY = 'docker.io'
