@@ -10,7 +10,7 @@ pipeline {
     environment {
         JAVA_HOME = tool name: 'JDK21', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven3', type: 'maven'
-        PATH = "${env.MAVEN_HOME}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
+        PATH = "${env.MAVEN_HOME}\\bin;${env.JAVA_HOME}\\bin;${env.PATH}"
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAME = "smartride-app:${params.APP_VERSION}"
         SERVER_PORT = '8080'
@@ -31,15 +31,15 @@ pipeline {
                 echo "Branch: ${env.GIT_BRANCH}"
                 echo "Target Environment: ${params.DEPLOY_ENV}"
                 echo "=========================================="
-                sh 'java -version || true'
-                sh 'mvn -version || true'
+                bat 'java -version'
+                bat 'mvn -version'
             }
         }
 
         stage('Maven Build & Unit Tests') {
             steps {
                 echo "Compiling code and executing JUnit unit & integration tests..."
-                sh './mvnw clean test'
+                bat 'mvnw.cmd clean test'
             }
             post {
                 always {
@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 echo "Executing automated headless Selenium browser tests..."
-                sh './mvnw test -Dtest=SmartRideSeleniumIT'
+                bat 'mvnw.cmd test -Dtest=SmartRideSeleniumIT'
             }
             post {
                 always {
@@ -76,7 +76,7 @@ pipeline {
         stage('Package Application Artifact') {
             steps {
                 echo "Packaging executable WAR artifact..."
-                sh './mvnw package -DskipTests'
+                bat 'mvnw.cmd package -DskipTests'
             }
             post {
                 success {
@@ -87,24 +87,58 @@ pipeline {
 
         stage('Docker Build & Image Tagging') {
             steps {
-                echo "Building Docker container image: ${env.IMAGE_NAME}..."
-                sh "docker build -t ${env.IMAGE_NAME} -t smartride-app:latest ."
+                echo "Checking Docker availability and building image: ${env.IMAGE_NAME}..."
+                powershell '''
+                    $dockerCheck = Get-Command docker -ErrorAction SilentlyContinue
+                    if (-not $dockerCheck) {
+                        Write-Error "Docker CLI is not found on PATH. Docker build cannot proceed."
+                        exit 1
+                    }
+                    docker info 2>&1 | Out-Null
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Docker daemon is not running or accessible. Start Docker Desktop/Daemon to proceed with Docker build."
+                        exit 1
+                    }
+                    docker build -t ${env.IMAGE_NAME} -t smartride-app:latest .
+                    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                '''
             }
         }
 
         stage('Continuous Deployment & Health Probe') {
             steps {
                 echo "Deploying container to ${params.DEPLOY_ENV}..."
-                sh """
-                    docker stop smartride-container || true
-                    docker rm smartride-container || true
+                powershell '''
+                    docker stop smartride-container 2>$null
+                    docker rm smartride-container 2>$null
                     docker run -d -p 8080:8080 --name smartride-container ${env.IMAGE_NAME}
-                """
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Failed to start container smartride-container"
+                        exit $LASTEXITCODE
+                    }
+                '''
                 echo "Verifying deployment health at http://localhost:8080/actuator/health..."
-                sh """
-                    sleep 10
-                    curl -f http://localhost:8080/actuator/health || curl -f http://localhost:8080/api/health
-                """
+                powershell '''
+                    Start-Sleep -Seconds 10
+                    $endpoints = @("http://localhost:8080/actuator/health", "http://localhost:8080/api/health")
+                    $healthy = $false
+                    foreach ($ep in $endpoints) {
+                        try {
+                            $res = Invoke-WebRequest -Uri $ep -UseBasicParsing -TimeoutSec 5
+                            if ($res.StatusCode -eq 200) {
+                                Write-Host "Health check succeeded on $ep"
+                                $healthy = $true
+                                break
+                            }
+                        } catch {
+                            Write-Host "Endpoint $ep not ready yet..."
+                        }
+                    }
+                    if (-not $healthy) {
+                        Write-Error "Health check failed on all endpoints."
+                        exit 1
+                    }
+                '''
             }
         }
     }
