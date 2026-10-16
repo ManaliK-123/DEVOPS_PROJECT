@@ -88,8 +88,10 @@ public class SmartRideSeleniumIT {
         try {
             if (driver instanceof TakesScreenshot takesScreenshot) {
                 File src = takesScreenshot.getScreenshotAs(OutputType.FILE);
-                Path dest = Paths.get(SCREENSHOTS_DIR, testName + ".png");
-                Files.copy(src.toPath(), dest);
+                Path destDir = Paths.get(SCREENSHOTS_DIR);
+                Files.createDirectories(destDir);
+                Path dest = destDir.resolve(testName + ".png");
+                Files.copy(src.toPath(), dest, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Screenshot captured: " + dest.toAbsolutePath());
             }
         } catch (Exception e) {

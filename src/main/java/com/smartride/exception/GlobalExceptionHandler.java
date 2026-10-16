@@ -46,6 +46,8 @@ public class GlobalExceptionHandler {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         error.put("errors", fieldErrors);
+        String detailedMessage = fieldErrors.values().stream().findFirst().orElse("Validation failed");
+        error.put("message", detailedMessage);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 

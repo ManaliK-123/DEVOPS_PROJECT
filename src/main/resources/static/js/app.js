@@ -91,12 +91,16 @@ function setupBookingForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const d = new Date(Date.now() + 15 * 60000);
+        const pad = n => String(n).padStart(2, '0');
+        const localDepartureTime = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
         const payload = {
             passengerName: document.getElementById('passengerName').value,
             passengerPhone: document.getElementById('passengerPhone').value,
             sourceLocation: document.getElementById('sourceLocation').value,
             destinationLocation: document.getElementById('destinationLocation').value,
-            departureTime: new Date(Date.now() + 15 * 60000).toISOString().slice(0, 19),
+            departureTime: localDepartureTime,
             requestedSeats: parseInt(document.getElementById('requestedSeats').value, 10),
             vehicleType: document.getElementById('vehicleType').value
         };
