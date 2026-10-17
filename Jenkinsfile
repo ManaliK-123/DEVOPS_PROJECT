@@ -39,11 +39,11 @@ pipeline {
         stage('Maven Build & Unit Tests') {
             steps {
                 echo "Compiling code and executing JUnit unit & integration tests..."
-                bat 'mvnw.cmd clean test'
+                bat 'mvn clean test'
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+                    junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
                 }
             }
         }
@@ -54,7 +54,7 @@ pipeline {
             }
             steps {
                 echo "Executing automated headless Selenium browser tests..."
-                bat 'mvnw.cmd test -Dtest=SmartRideSeleniumIT'
+                bat 'mvn test -Dtest=SmartRideSeleniumIT'
             }
             post {
                 always {
@@ -76,7 +76,7 @@ pipeline {
         stage('Package Application Artifact') {
             steps {
                 echo "Packaging executable WAR artifact..."
-                bat 'mvnw.cmd package -DskipTests'
+                bat 'mvn package -DskipTests'
             }
             post {
                 success {
@@ -99,7 +99,7 @@ pipeline {
                         Write-Error "Docker daemon is not running or accessible. Start Docker Desktop/Daemon to proceed with Docker build."
                         exit 1
                     }
-                    docker build -t ${env.IMAGE_NAME} -t smartride-app:latest .
+                    docker build -t $env:IMAGE_NAME -t smartride-app:latest .
                     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                 '''
             }
@@ -111,16 +111,16 @@ pipeline {
                 powershell '''
                     docker stop smartride-container 2>$null
                     docker rm smartride-container 2>$null
-                    docker run -d -p 8080:8080 --name smartride-container ${env.IMAGE_NAME}
+                    docker run -d -p 8081:8080 --name smartride-container $env:IMAGE_NAME
                     if ($LASTEXITCODE -ne 0) {
                         Write-Error "Failed to start container smartride-container"
                         exit $LASTEXITCODE
                     }
                 '''
-                echo "Verifying deployment health at http://localhost:8080/actuator/health..."
+                echo "Verifying deployment health at http://localhost:8081/actuator/health..."
                 powershell '''
                     Start-Sleep -Seconds 10
-                    $endpoints = @("http://localhost:8080/actuator/health", "http://localhost:8080/api/health")
+                    $endpoints = @("http://localhost:8081/actuator/health", "http://localhost:8081/api/health")
                     $healthy = $false
                     foreach ($ep in $endpoints) {
                         try {
@@ -145,7 +145,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully! Application live at http://localhost:8080"
+            echo "Pipeline completed successfully! Application live at http://localhost:8081"
         }
         failure {
             echo "Pipeline failed. Review stage logs and test failures above."
