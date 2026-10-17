@@ -58,14 +58,7 @@ pipeline {
             }
             post {
                 always {
-                    publishHTML(target: [
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/selenium-screenshots',
-                        reportFiles: '*.png',
-                        reportName: 'Selenium Test Screenshots'
-                    ])
+                    archiveArtifacts artifacts: 'target/selenium-screenshots/*.png', allowEmptyArchive: true, fingerprint: true
                 }
                 failure {
                     echo "Selenium test stage failed! Deployment blocked."
