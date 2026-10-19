@@ -10,11 +10,9 @@ pipeline {
     environment {
         JAVA_HOME = tool name: 'JDK21', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven3', type: 'maven'
-        PATH = "${env.MAVEN_HOME}\\bin;${env.JAVA_HOME}\\bin;${env.PATH}"
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAME = "smartride-app:${params.APP_VERSION}"
         SERVER_PORT = '8080'
-        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
     }
 
     options {
@@ -83,6 +81,20 @@ pipeline {
             steps {
                 echo "Checking Docker availability and building image: ${env.IMAGE_NAME}..."
                 powershell '''
+                    $knownPaths = @(
+                        "C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin",
+                        "$env:LOCALAPPDATA\\Programs\\DockerDesktop\\resources\\bin",
+                        "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+                        "C:\\ProgramData\\DockerDesktop\\version-bin"
+                    )
+                    foreach ($dir in $knownPaths) {
+                        if (Test-Path "$dir\\docker.exe") {
+                            if ($env:PATH -notlike "*$dir*") {
+                                $env:PATH = "$dir;$env:PATH"
+                            }
+                        }
+                    }
+
                     $dockerCheck = Get-Command docker -ErrorAction SilentlyContinue
                     if (-not $dockerCheck) {
                         Write-Error "Docker CLI is not found on PATH. Docker build cannot proceed."
@@ -103,6 +115,20 @@ pipeline {
             steps {
                 echo "Deploying container to ${params.DEPLOY_ENV}..."
                 powershell '''
+                    $knownPaths = @(
+                        "C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin",
+                        "$env:LOCALAPPDATA\\Programs\\DockerDesktop\\resources\\bin",
+                        "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+                        "C:\\ProgramData\\DockerDesktop\\version-bin"
+                    )
+                    foreach ($dir in $knownPaths) {
+                        if (Test-Path "$dir\\docker.exe") {
+                            if ($env:PATH -notlike "*$dir*") {
+                                $env:PATH = "$dir;$env:PATH"
+                            }
+                        }
+                    }
+
                     docker stop smartride-container 2>$null
                     docker rm smartride-container 2>$null
                     docker run -d -p 8081:8080 --name smartride-container $env:IMAGE_NAME
