@@ -14,6 +14,7 @@ pipeline {
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAME = "smartride-app:${params.APP_VERSION}"
         SERVER_PORT = '8080'
+        PATH = "C:\\Program Files\\Docker\\Docker\\resources\\bin;${env.PATH}"
     }
 
     options {
