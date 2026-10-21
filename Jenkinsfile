@@ -14,6 +14,12 @@ pipeline {
         DOCKER_REGISTRY = 'docker.io'
         IMAGE_NAME = "smartride-app:${params.APP_VERSION}"
         SERVER_PORT = '8080'
+        // Connect directly to Docker Desktop's Linux engine named pipe.
+        // This allows Jenkins (running as LocalSystem) to reach Docker Desktop
+        // without relying on the per-user 'desktop-linux' CLI context.
+        DOCKER_HOST = 'npipe:////./pipe/dockerDesktopLinuxEngine'
+        // Clear any inherited DOCKER_CONTEXT so it cannot override DOCKER_HOST.
+        DOCKER_CONTEXT = ''
     }
 
     options {
