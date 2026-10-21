@@ -75,16 +75,19 @@ An enterprise-grade, lightweight, and modern mobility platform built with **Java
 ## 🐳 Docker Deployment
 
 ### 1. Build Docker Image
+
+Jenkins already handles this in the CI/CD pipeline. To build manually:
 ```bash
 docker build -t smartride-app:1.1.0 .
 ```
 
-### 2. Run Container
+### 2. Run Container (Host Port 8081 → Container Port 8080)
 ```bash
-docker run -d -p 8080:8080 --name smartride-container smartride-app:1.1.0
+docker run -d -p 8081:8080 --name smartride-container smartride-app:1.1.0
 ```
+**App is accessible at:** `http://localhost:8081`
 
-### 3. Docker Compose (App + PostgreSQL Profile)
+### 3. Docker Compose (App + Optional PostgreSQL Profile)
 ```bash
 docker-compose up -d
 ```
@@ -95,12 +98,12 @@ docker-compose up -d
 
 The project includes a production-ready declarative pipeline in `Jenkinsfile`:
 - **Stage 1:** Environment & SCM Checkout
-- **Stage 2:** Maven Compile & Build
-- **Stage 3:** Automated Unit & Integration Testing (`mvn test`)
-- **Stage 4:** Continuous Selenium UI Testing
-- **Stage 5:** Package Application WAR Artifact
-- **Stage 6:** Docker Container Image Build & Version Tagging
-- **Stage 7:** Deployment & Automated Health Verification (`/actuator/health`)
+- **Stage 2:** Maven Compile & Unit Tests (13 tests)
+- **Stage 3:** Selenium End-to-End UI Testing (4 journeys)
+- **Stage 4:** Package Application WAR Artifact
+- **Stage 5:** Docker Image Build & Version Tagging
+- **Stage 6:** Docker Hub Registry Publish (requires `dockerhub-creds` Jenkins credential)
+- **Stage 7:** Container Deployment & Automated Health Verification (`/actuator/health` on port 8081)
 
 ---
 

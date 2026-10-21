@@ -5,6 +5,8 @@ pipeline {
         choice(name: 'DEPLOY_ENV', choices: ['staging', 'production'], description: 'Target Deployment Environment')
         string(name: 'APP_VERSION', defaultValue: '1.1.0', description: 'Application Version Tag')
         booleanParam(name: 'RUN_SELENIUM_TESTS', defaultValue: true, description: 'Run Selenium End-to-End Suite')
+        string(name: 'DOCKERHUB_NAMESPACE', defaultValue: 'manalik123', description: 'Docker Hub username / organisation for registry push')
+        booleanParam(name: 'PUSH_TO_REGISTRY', defaultValue: true, description: 'Push built image to Docker Hub registry (requires dockerhub-creds credential in Jenkins)')
     }
 
     environment {
@@ -140,6 +142,80 @@ pipeline {
                     }
                     Write-Host "Successfully built and verified image $env:IMAGE_NAME"
                 '''
+            }
+        }
+
+        stage('Docker Hub Registry Publish') {
+            when {
+                expression { return params.PUSH_TO_REGISTRY }
+            }
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
+            steps {
+                echo "Publishing image to Docker Hub as ${params.DOCKERHUB_NAMESPACE}/smartride-app..."
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    powershell '''
+                        $knownPaths = @(
+                            "C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin",
+                            "$env:LOCALAPPDATA\\Programs\\DockerDesktop\\resources\\bin",
+                            "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+                            "C:\\ProgramData\\DockerDesktop\\version-bin"
+                        )
+                        foreach ($dir in $knownPaths) {
+                            if (Test-Path "$dir\\docker.exe") {
+                                if ($env:PATH -notlike "*$dir*") { $env:PATH = "$dir;$env:PATH" }
+                            }
+                        }
+
+                        Write-Host "=== Authenticating with Docker Hub ==="
+                        $env:DOCKER_TOKEN | docker login --username "$env:DOCKER_USER" --password-stdin
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Docker Hub login FAILED (exit code: $LASTEXITCODE). Check dockerhub-creds credential in Jenkins."
+                            exit $LASTEXITCODE
+                        }
+
+                        $remoteVersion = "$env:DOCKERHUB_NAMESPACE/smartride-app:$env:APP_VERSION"
+                        $remoteLatest  = "$env:DOCKERHUB_NAMESPACE/smartride-app:latest"
+
+                        Write-Host "=== Tagging local image for registry ==="
+                        docker tag "$env:IMAGE_NAME" "$remoteVersion"
+                        if ($LASTEXITCODE -ne 0) { docker logout; exit $LASTEXITCODE }
+                        docker tag "smartride-app:latest" "$remoteLatest"
+                        if ($LASTEXITCODE -ne 0) { docker logout; exit $LASTEXITCODE }
+
+                        Write-Host "=== Pushing $remoteVersion ==="
+                        docker push "$remoteVersion"
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Push of $remoteVersion FAILED (exit code: $LASTEXITCODE)."
+                            docker logout
+                            exit $LASTEXITCODE
+                        }
+
+                        Write-Host "=== Pushing $remoteLatest ==="
+                        docker push "$remoteLatest"
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Push of $remoteLatest FAILED (exit code: $LASTEXITCODE)."
+                            docker logout
+                            exit $LASTEXITCODE
+                        }
+
+                        Write-Host "=== Verifying remote manifest ==="
+                        docker manifest inspect "$remoteVersion" | Out-Null
+                        if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Remote manifest inspect FAILED for $remoteVersion — push may not have completed."
+                            docker logout
+                            exit $LASTEXITCODE
+                        }
+
+                        Write-Host "Successfully published $remoteVersion and $remoteLatest to Docker Hub."
+                        docker logout
+                    '''
+                }
             }
         }
 
