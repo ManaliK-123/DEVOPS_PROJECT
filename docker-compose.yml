@@ -8,7 +8,7 @@ services:
     image: smartride-app:1.1.0
     container_name: smartride-application
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - SERVER_PORT=8080

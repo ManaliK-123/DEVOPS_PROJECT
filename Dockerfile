@@ -1,25 +1,18 @@
-# Multi-stage Dockerfile for SmartRide Application
-
-# Stage 1: Build the WAR artifact
-FROM maven:3.9.9-eclipse-temurin-17 AS builder
-WORKDIR /build
-
-# Copy project descriptor and source files
-COPY pom.xml ./
-COPY src ./src
-
-# Build artifact with Maven (Jenkins already executes full test suite prior to image build)
-RUN mvn -B package -DskipTests
-
-# Stage 2: Production JRE runtime image
+# Production JRE runtime image for SmartRide Application
 FROM eclipse-temurin:17-jre
+
+# Install curl for health check probe
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Create unprivileged application user
 RUN groupadd -r smartride && useradd -r -g smartride -m -d /app smartride
 
-# Copy built WAR artifact from builder stage
-COPY --from=builder /build/target/smartride-app.war /app/smartride-app.war
+# Copy pre-packaged WAR artifact built by CI pipeline
+COPY target/smartride-app.war /app/smartride-app.war
 
 # Set ownership
 RUN chown -R smartride:smartride /app
@@ -39,4 +32,5 @@ HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
 
 # Launch Application
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/smartride-app.war"]
+
 

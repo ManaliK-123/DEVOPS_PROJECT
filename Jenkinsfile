@@ -79,6 +79,9 @@ pipeline {
         }
 
         stage('Docker Build & Image Tagging') {
+            options {
+                timeout(time: 5, unit: 'MINUTES')
+            }
             steps {
                 echo "Checking Docker availability and building image: ${env.IMAGE_NAME}..."
                 powershell '''
@@ -101,13 +104,35 @@ pipeline {
                         Write-Error "Docker CLI is not found on PATH. Docker build cannot proceed."
                         exit 1
                     }
-                    docker info 2>&1 | Out-Null
+
+                    Write-Host "=== Docker CLI Version ==="
+                    docker --version
                     if ($LASTEXITCODE -ne 0) {
-                        Write-Error "Docker daemon is not running or accessible. Start Docker Desktop/Daemon to proceed with Docker build."
-                        exit 1
+                        Write-Error "Failed to execute docker --version (exit code: $LASTEXITCODE)."
+                        exit $LASTEXITCODE
                     }
-                    docker build -t $env:IMAGE_NAME -t smartride-app:latest .
-                    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+                    Write-Host "=== Docker System Info ==="
+                    docker info
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Docker daemon is not running or accessible. Start Docker Desktop/Daemon to proceed with Docker build (exit code: $LASTEXITCODE)."
+                        exit $LASTEXITCODE
+                    }
+
+                    Write-Host "=== Building Docker Image ==="
+                    docker build --progress=plain --pull=false -t "$env:IMAGE_NAME" -t "smartride-app:latest" .
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Docker build failed with exit code $LASTEXITCODE."
+                        exit $LASTEXITCODE
+                    }
+
+                    Write-Host "=== Verifying Docker Image ==="
+                    docker image inspect "$env:IMAGE_NAME" | Out-Null
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Error "Docker image inspect failed: Image '$env:IMAGE_NAME' not found."
+                        exit $LASTEXITCODE
+                    }
+                    Write-Host "Successfully built and verified image $env:IMAGE_NAME"
                 '''
             }
         }
@@ -130,11 +155,17 @@ pipeline {
                         }
                     }
 
-                    docker stop smartride-container 2>$null
-                    docker rm smartride-container 2>$null
-                    docker run -d -p 8081:8080 --name smartride-container $env:IMAGE_NAME
+                    $existing = docker ps -a -q -f "name=^smartride-container$"
+                    if ($existing) {
+                        Write-Host "Stopping and removing existing container smartride-container..."
+                        docker stop smartride-container
+                        docker rm smartride-container
+                    }
+
+                    Write-Host "Starting container smartride-container on port 8081:8080..."
+                    docker run -d -p 8081:8080 --name smartride-container "$env:IMAGE_NAME"
                     if ($LASTEXITCODE -ne 0) {
-                        Write-Error "Failed to start container smartride-container"
+                        Write-Error "Failed to start container smartride-container (exit code: $LASTEXITCODE)"
                         exit $LASTEXITCODE
                     }
                 '''
@@ -143,17 +174,21 @@ pipeline {
                     Start-Sleep -Seconds 10
                     $endpoints = @("http://localhost:8081/actuator/health", "http://localhost:8081/api/health")
                     $healthy = $false
-                    foreach ($ep in $endpoints) {
-                        try {
-                            $res = Invoke-WebRequest -Uri $ep -UseBasicParsing -TimeoutSec 5
-                            if ($res.StatusCode -eq 200) {
-                                Write-Host "Health check succeeded on $ep"
-                                $healthy = $true
-                                break
+                    for ($i = 0; $i -lt 6; $i++) {
+                        foreach ($ep in $endpoints) {
+                            try {
+                                $res = Invoke-WebRequest -Uri $ep -UseBasicParsing -TimeoutSec 5
+                                if ($res.StatusCode -eq 200) {
+                                    Write-Host "Health check succeeded on $ep"
+                                    $healthy = $true
+                                    break
+                                }
+                            } catch {
+                                Write-Host "Endpoint $ep not ready yet (attempt $($i+1))..."
                             }
-                        } catch {
-                            Write-Host "Endpoint $ep not ready yet..."
                         }
+                        if ($healthy) { break }
+                        Start-Sleep -Seconds 5
                     }
                     if (-not $healthy) {
                         Write-Error "Health check failed on all endpoints."
