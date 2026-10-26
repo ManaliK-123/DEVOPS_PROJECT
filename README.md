@@ -4,6 +4,15 @@ An enterprise-grade, lightweight, and modern mobility platform built with **Java
 
 ---
 
+## 📚 Master Reports & Evidence Dossier
+
+- 🏆 **[Master Project Completion Report](docs/reports/FINAL_PROJECT_COMPLETION_REPORT.md)** — Comprehensive master academic report covering all 15 DevOps tasks, architecture, completion matrix, verified test metrics, Jenkins pipeline results, Docker evidence, Ansible provisioning, and release state.
+- 📂 **[15 Individual Task Reports & Evidence Index](docs/reports/README.md)** — Detailed task-by-task execution reports (Task 01 through Task 15) with embedded genuine screenshots and command transcripts.
+- 📊 **[Project Task Status Tracker](TASK_STATUS.md)** — High-level 15-task status tracking matrix.
+- 📑 **[Project Evidence Dossier](PROJECT_EVIDENCE.md)** — Consolidated operational evidence and verification dossier.
+
+---
+
 ## 🚀 Key Features
 
 - **Passenger Hub:**
@@ -125,7 +134,12 @@ ansible-playbook -i ansible/inventory.ini ansible/rollback.yml -e "rollback_vers
 
 ```
 ├── .github/                       # GitHub issue templates and PR configuration
-├── docs/                          # Task documentation (TASK 1 - 3)
+├── docs/                          # Task documentation and reports
+│   ├── reports/                   # 15 Individual Task Reports & Evidence
+│   │   ├── README.md              # Reports Index
+│   │   ├── FINAL_PROJECT_COMPLETION_REPORT.md # Master academic completion report
+│   │   ├── TASK_01_Report.md ... TASK_15_Report.md
+│   │   └── screenshots/           # Evidence screenshots organized by task (task-01 .. task-15)
 │   ├── TASK1_PROBLEM_DEFINITION.md
 │   ├── TASK2_AGILE_DEVOPS_PLAN.md
 │   └── TASK3_ARCHITECTURE_SRS.md

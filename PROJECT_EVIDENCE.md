@@ -7,6 +7,8 @@
 **Branch:** `main`
 **Latest Verified Commit:** `f3a97c9` — `fix(docker): set DOCKER_HOST to named pipe so Jenkins/LocalSystem can reach Docker Desktop`
 **Latest Release Tags:** `v1.0.0-mvp`, `v1.1.0-release`
+**Master Project Report:** [docs/reports/FINAL_PROJECT_COMPLETION_REPORT.md](docs/reports/FINAL_PROJECT_COMPLETION_REPORT.md)
+**Individual Task Reports Index:** [docs/reports/README.md](docs/reports/README.md)
 **Build Tool:** Apache Maven 3.9.6
 **Runtime:** Java OpenJDK 17 / 21 (Jenkins JDK21 tool)
 **Jenkins URL:** `http://localhost:8080` (Jenkins service on host)
