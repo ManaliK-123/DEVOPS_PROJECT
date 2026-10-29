@@ -62,12 +62,19 @@ docs/reports/screenshots/
 │   ├── task-06-driver-portal.png
 │   └── task-06-passenger-booking.png
 ├── task-07/
+│   ├── jenkins-build16-console-checkout.png
+│   ├── jenkins-job-dashboard.png
 │   ├── task-07-jenkins-job.png
 │   └── task-07-maven-tests.png
 ├── task-08/
+│   ├── jenkins-build16-artifacts.png
+│   ├── jenkins-checkout-tool-configuration.png
+│   ├── jenkins-environment-inspection.png
+│   ├── jenkins-scm-environment-stage.png
 │   ├── task-08-jenkinsfile.png
 │   └── task-08-war-artifact.png
 ├── task-09/
+│   ├── jenkins-automated-tests-and-packaging.png
 │   ├── task-09-journey-1.png
 │   ├── task-09-journey-2.png
 │   ├── task-09-journey-3.png
@@ -76,9 +83,12 @@ docs/reports/screenshots/
 │   ├── task-10-continuous-testing.png
 │   └── task-10-defect-injection-fix.png
 ├── task-11/
+│   ├── docker-desktop-running-container.png
+│   ├── jenkins-docker-build-stage.png
 │   ├── task-11-container-running.png
 │   └── task-11-dockerfile.png
 ├── task-12/
+│   ├── jenkins-deployment-health-probe.png
 │   ├── task-12-docker-registry.png
 │   └── task-12-jenkins-cd.png
 ├── task-13/
@@ -88,6 +98,7 @@ docs/reports/screenshots/
 │   ├── task-14-ansible-rollback.png
 │   └── task-14-idempotency-health.png
 └── task-15/
+    ├── jenkins-build16-all-stages-success.png
     ├── task-15-end-to-end-pipeline.png
     └── task-15-final-release-state.png
 ```

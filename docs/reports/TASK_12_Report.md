@@ -78,11 +78,22 @@ Automate container deployment directly through the Jenkins CI/CD pipeline, manag
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Pipeline: Continuous Deployment & Health Probe Stage
+![Jenkins Deployment & Health Probe](screenshots/task-12/jenkins-deployment-health-probe.png)
+*Figure 12.1: Jenkins Pipeline Steps for Continuous Deployment & Health Probe (23s) showing container staging deployment, health probe verification at http://localhost:8081/actuator/health, and post actions indicating application is live at http://localhost:8081.*
+
+### Pre-existing Pipeline & Registry Evidence
 ![Jenkins Continuous Deployment Stage Console Output](screenshots/task-12/task-12-jenkins-cd.png)
-*Figure 12.1: Jenkins Build #16 console output confirming automated container deployment and healthy actuator response.*
+*Figure 12.2: Jenkins Build #16 console output confirming automated container deployment and healthy actuator response.*
 
 ![Docker Hub Registry Publish Stage and Compose Specification](screenshots/task-12/task-12-docker-registry.png)
-*Figure 12.2: Docker Hub registry publishing stage implementation in Jenkinsfile and docker-compose.yml configuration.*
+*Figure 12.3: Docker Hub registry publishing stage implementation in Jenkinsfile and docker-compose.yml configuration.*
+
+### Supplementary Cross-Stage Evidence
+- **Environment & Staging Parameters:** See [jenkins-environment-inspection.png](screenshots/task-08/jenkins-environment-inspection.png) in Task 08 for target environment staging confirmation.
+- **Docker Build Automation:** See [jenkins-docker-build-stage.png](screenshots/task-11/jenkins-docker-build-stage.png) in Task 11 for Jenkins-driven image build evidence.
+- **Deployed Container Runtime:** See [docker-desktop-running-container.png](screenshots/task-11/docker-desktop-running-container.png) in Task 11 for Docker Desktop verification of the running container on port 8081.
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 for end-to-end green deployment.
 
 ---
 

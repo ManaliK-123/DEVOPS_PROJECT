@@ -60,17 +60,26 @@ Automate critical user journeys using Selenium WebDriver against the running Spr
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Pipeline: Automated Testing & Packaging Steps
+![Jenkins Pipeline Automated Tests and Packaging](screenshots/task-09/jenkins-automated-tests-and-packaging.png)
+*Figure 9.1: Jenkins Pipeline Steps displaying execution of Maven Build & Unit Tests (`mvn clean test`, 1m 11s), JUnit recording (0.52s), Selenium UI Continuous Testing (`mvn test -Dtest=SmartRideSeleniumIT`, 1m 12s), artifact archival (0.6s), and Package Application Artifact stage.*
+
+### Automated User Journey Screenshots
 ![Journey 1: Landing Page and Brand Header](screenshots/task-09/task-09-journey-1.png)
-*Figure 9.1: Automated Selenium Journey 1 verifying landing page, branding, and navigation headers.*
+*Figure 9.2: Automated Selenium Journey 1 verifying landing page, branding, and navigation headers.*
 
 ![Journey 2: Passenger Ride Booking Form](screenshots/task-09/task-09-journey-2.png)
-*Figure 9.2: Automated Selenium Journey 2 showing passenger ride creation and immediate table listing with status REQUESTED.*
+*Figure 9.3: Automated Selenium Journey 2 showing passenger ride creation and immediate table listing with status REQUESTED.*
 
 ![Journey 3: Driver Portal Ride Acceptance](screenshots/task-09/task-09-journey-3.png)
-*Figure 9.3: Automated Selenium Journey 3 demonstrating driver portal switching and ride acceptance workflow.*
+*Figure 9.4: Automated Selenium Journey 3 demonstrating driver portal switching and ride acceptance workflow.*
 
 ![Journey 4: Admin Analytics Dashboard](screenshots/task-09/task-09-journey-4.png)
-*Figure 9.4: Automated Selenium Journey 4 showing administrator KPI dashboard cards and search filter interaction.*
+*Figure 9.5: Automated Selenium Journey 4 showing administrator KPI dashboard cards and search filter interaction.*
+
+### Supplementary Cross-Stage Evidence
+- **Archived Journey Screenshots:** See [jenkins-build16-artifacts.png](screenshots/task-08/jenkins-build16-artifacts.png) in Task 08 confirming Jenkins build #16 archived all four journey PNG files.
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 showing Selenium testing within the complete green pipeline.
 
 ---
 

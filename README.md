@@ -59,10 +59,11 @@ An enterprise-grade, lightweight, and modern mobility platform built with **Java
 *(On Linux/macOS: `./mvnw spring-boot:run`)*
 
 ### 2. Access the Application
-- **Web UI:** [http://localhost:8080](http://localhost:8080)
-- **Actuator Health Probe:** [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
-- **API Health:** [http://localhost:8080/api/health](http://localhost:8080/api/health)
-- **H2 Database Console:** [http://localhost:8080/h2-console](http://localhost:8080/h2-console) (`JDBC URL: jdbc:h2:mem:smartridedb`, User: `sa`, Password: *empty*)
+- **Web UI:** [http://localhost:8081](http://localhost:8081)
+- **Actuator Health Probe:** [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
+- **API Health:** [http://localhost:8081/api/health](http://localhost:8081/api/health)
+- **H2 Database Console:** [http://localhost:8081/h2-console](http://localhost:8081/h2-console) (`JDBC URL: jdbc:h2:mem:smartridedb`, User: `sa`, Password: *empty*)
+*(Note: Port 8081 is used to prevent port conflict with Jenkins running on 8080)*
 
 ---
 

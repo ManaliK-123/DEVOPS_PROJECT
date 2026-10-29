@@ -68,11 +68,24 @@ Validate the entire integrated DevOps release lifecycle from source checkout to 
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Build #16 Full Stages Overview (All Stages Success)
+![Jenkins Build #16 Full Stages Success](screenshots/task-15/jenkins-build16-all-stages-success.png)
+*Figure 15.1: Jenkins Build #16 full Stages overview (completed 21 October 2026, duration: 4 min 11 sec) showing all 8 pipeline stages green: Checkout SCM (3s), SCM & Environment Inspection (2s), Maven Build & Unit Tests (1m 12s), Selenium UI Continuous Testing (1m 13s), Package Application Artifact (26s), Docker Build & Image Tagging (24s), Continuous Deployment & Health Probe (23s), and Post Actions (0.25s) confirming application live at http://localhost:8081.*
+
+### Pre-existing Release & Pipeline Evidence
 ![Full End-to-End Jenkins Pipeline Stages](screenshots/task-15/task-15-end-to-end-pipeline.png)
-*Figure 15.1: Jenkins build #16 summary confirming successful sequential execution across all 7 pipeline stages.*
+*Figure 15.2: Jenkins build #16 summary confirming successful sequential execution across all pipeline stages.*
 
 ![Final Integrated Release State and Health Verification](screenshots/task-15/task-15-final-release-state.png)
-*Figure 15.2: Final release state showing verified commit, release tags, actuator health response, and 100% completion status.*
+*Figure 15.3: Final release state showing verified commit, release tags, actuator health response, and completion status.*
+
+### Consolidated Cross-Stage Evidence Portfolio
+- **CI Dashboard & Build History:** See [jenkins-job-dashboard.png](screenshots/task-07/jenkins-job-dashboard.png) and [jenkins-build16-console-checkout.png](screenshots/task-07/jenkins-build16-console-checkout.png) in Task 07.
+- **Archived Release Artifacts:** See [jenkins-build16-artifacts.png](screenshots/task-08/jenkins-build16-artifacts.png) in Task 08 for `smartride-app.war` and Selenium journey screenshots.
+- **Automated Testing & Packaging:** See [jenkins-automated-tests-and-packaging.png](screenshots/task-09/jenkins-automated-tests-and-packaging.png) in Task 09.
+- **Docker Container Automation:** See [jenkins-docker-build-stage.png](screenshots/task-11/jenkins-docker-build-stage.png) in Task 11.
+- **Docker Desktop Running Container:** See [docker-desktop-running-container.png](screenshots/task-11/docker-desktop-running-container.png) in Task 11 for active container execution on port 8081 (captured 29 October 2026).
+- **Deployment & Health Probe:** See [jenkins-deployment-health-probe.png](screenshots/task-12/jenkins-deployment-health-probe.png) in Task 12.
 
 ---
 

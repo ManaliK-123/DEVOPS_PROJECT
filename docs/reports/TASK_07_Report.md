@@ -73,11 +73,24 @@ Configure the host Jenkins CI server (version 2.580.1), establish the `SmartRide
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Job Dashboard & Test Trend
+![Jenkins Job Dashboard](screenshots/task-07/jenkins-job-dashboard.png)
+*Figure 7.1: Jenkins SmartRide-CI-CD job status, build history (#16, 21 Oct 2026), test-result trend (13 passed, 0 failed), and archived artifacts.*
+
+### Jenkins Build #16 Console Checkout
+![Jenkins Build #16 Console Checkout](screenshots/task-07/jenkins-build16-console-checkout.png)
+*Figure 7.2: Build #16 console log showing Git checkout from https://github.com/ManaliK-123/DEVOPS_PROJECT.git, commit f3a97c9 (refs/remotes/origin/main), dated 21 October 2026.*
+
+### Pre-existing Pipeline & Maven Evidence
 ![Jenkins Pipeline Job Configuration and Status](screenshots/task-07/task-07-jenkins-job.png)
-*Figure 7.1: Jenkins SmartRide-CI-CD job configuration, SCM tracking, and verified build #16 SUCCESS status.*
+*Figure 7.3: Jenkins SmartRide-CI-CD job configuration, SCM tracking, and verified build #16 SUCCESS status.*
 
 ![Maven Test Suite Execution Results](screenshots/task-07/task-07-maven-tests.png)
-*Figure 7.2: Maven clean test execution showing 13/13 passing tests across all test suites.*
+*Figure 7.4: Maven clean test execution showing 13/13 passing tests across all test suites.*
+
+### Supplementary Cross-Stage Evidence
+- **Automated Test & Packaging Steps:** See [jenkins-automated-tests-and-packaging.png](screenshots/task-09/jenkins-automated-tests-and-packaging.png) in Task 09 for CI test execution.
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 for Jenkins build #16 end-to-end execution.
 
 ---
 

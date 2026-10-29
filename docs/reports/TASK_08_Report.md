@@ -78,11 +78,33 @@ Author and version a declarative `Jenkinsfile` (Pipeline as Code) with parameter
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Build #16 Summary & Archived Artifacts
+![Jenkins Build #16 Artifacts](screenshots/task-08/jenkins-build16-artifacts.png)
+*Figure 8.1: Jenkins build #16 summary (21 Oct 2026, 15:51:45) showing build metadata, Git revision f3a97c9, zero test failures, and archived artifacts: 4 Selenium journey PNGs and smartride-app.war (51.20 MiB).*
+
+### Pipeline Steps: Checkout & Tool Configuration
+![Pipeline Steps: Checkout and Tool Configuration](screenshots/task-08/jenkins-checkout-tool-configuration.png)
+*Figure 8.2: Jenkins Pipeline Steps displaying SCM checkout, environment initialization, and configured Maven3 and JDK21 global tools.*
+
+### Pipeline Steps: Environment & Commit Inspection
+![Pipeline Steps: Environment Inspection](screenshots/task-08/jenkins-environment-inspection.png)
+*Figure 8.3: Jenkins SCM & Environment Inspection stage output showing commit f3a97c916dd31a52c61afeeaebf6ba9e28268f3, branch origin/main, target environment staging, and java -version execution.*
+
+### Stages View: SCM & Environment Inspection
+![Stages View: SCM & Environment Inspection](screenshots/task-08/jenkins-scm-environment-stage.png)
+*Figure 8.4: Detailed Stages view for SCM & Environment Inspection stage (2s) showing batch commands for java and mvn version verification.*
+
+### Pre-existing Pipeline & Artifact Evidence
 ![Jenkinsfile Declarative Pipeline Stages and Parameters](screenshots/task-08/task-08-jenkinsfile.png)
-*Figure 8.1: Declarative Jenkinsfile pipeline definition showing build parameters, sequential stages, and post actions.*
+*Figure 8.5: Declarative Jenkinsfile pipeline definition showing build parameters, sequential stages, and post actions.*
 
 ![Executable WAR Artifact Packaging and Archival](screenshots/task-08/task-08-war-artifact.png)
-*Figure 8.2: Executable WAR archive packaging verification and Jenkins build #16 artifact archival confirmation.*
+*Figure 8.6: Executable WAR archive packaging verification and Jenkins build #16 artifact archival confirmation.*
+
+### Supplementary Cross-Stage Evidence
+- **Pipeline Execution & Dashboard:** See [jenkins-job-dashboard.png](screenshots/task-07/jenkins-job-dashboard.png) and [jenkins-build16-console-checkout.png](screenshots/task-07/jenkins-build16-console-checkout.png) in Task 07 for SCM checkout and provenance.
+- **Pipeline Testing & Packaging Steps:** See [jenkins-automated-tests-and-packaging.png](screenshots/task-09/jenkins-automated-tests-and-packaging.png) in Task 09 for test/package stage execution.
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 for Jenkins build #16 completed on 21 October 2026.
 
 ---
 

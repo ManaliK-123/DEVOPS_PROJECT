@@ -64,11 +64,16 @@ Integrate continuous testing within Jenkins, configure JUnit test recording dash
 
 ## 7. Screenshots and Evidence
 
+### Pre-existing Quality Gate & Defect Cycle Evidence
 ![Continuous Testing Quality Gate and JUnit Dashboard](screenshots/task-10/task-10-continuous-testing.png)
 *Figure 10.1: Jenkins JUnit dashboard recording 17 passing tests and verified quality gate status.*
 
 ![Defect Injection and Resolution Cycle](screenshots/task-10/task-10-defect-injection-fix.png)
 *Figure 10.2: Defect injection in RideStatus state machine, pipeline failure interception, and subsequent fix rerun.*
+
+### Supplementary Cross-Stage Evidence
+- **Pipeline Testing Stage Execution:** See [jenkins-automated-tests-and-packaging.png](screenshots/task-09/jenkins-automated-tests-and-packaging.png) in Task 09 showing both unit test and Selenium continuous testing stages.
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 showing all testing gates green in build #16.
 
 ---
 

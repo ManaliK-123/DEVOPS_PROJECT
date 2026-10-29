@@ -78,11 +78,15 @@ Validate configuration idempotency across repeat playbook runs (guaranteeing zer
 
 ## 7. Screenshots and Evidence
 
+### Pre-existing Rollback & Idempotency Evidence
 ![Ansible Automated Rollback Playbook](screenshots/task-14/task-14-ansible-rollback.png)
 *Figure 14.1: Ansible rollback playbook (rollback.yml) showing artifact pre-condition verification gate and atomic symlink rollback.*
 
 ![Playbook Idempotency and Health Verification](screenshots/task-14/task-14-idempotency-health.png)
 *Figure 14.2: Playbook recap confirming idempotency (changed=0 on repeat run) and healthy actuator response.*
+
+### Supporting Health-Check & Deployment Evidence
+- **Automated Health Probe Stage:** See [jenkins-deployment-health-probe.png](screenshots/task-12/jenkins-deployment-health-probe.png) in Task 12 for pipeline health checking on `http://localhost:8081/actuator/health`. *(Note: This image demonstrates pipeline health validation; Ansible rollback execution and idempotency logic are verified separately via playbook task specifications and local syntax checks).*
 
 ---
 

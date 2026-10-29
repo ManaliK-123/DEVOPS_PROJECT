@@ -72,11 +72,23 @@ Create an optimized container runtime environment using Docker, author a lean si
 
 ## 7. Screenshots and Evidence
 
+### Jenkins Docker Build & Image Tagging Stage
+![Jenkins Docker Build Stage](screenshots/task-11/jenkins-docker-build-stage.png)
+*Figure 11.1: Jenkins Pipeline Stages view for Docker Build & Image Tagging (24s) showing Docker CLI Version 29.8.2 and build of image smartride-app:1.1.0.*
+
+### Docker Desktop Running Container
+![Docker Desktop Running Container](screenshots/task-11/docker-desktop-running-container.png)
+*Figure 11.2: Docker Desktop GUI (dated 29 October 2026) showing container smartride-application (ID 6742576fd351), image smartride-app:1.1.0, status Running, port mapping 8081:8080, and Spring Boot 3.2.3 logs on Java 17.*
+
+### Pre-existing Dockerfile & CLI Evidence
 ![Dockerfile Runtime Specification](screenshots/task-11/task-11-dockerfile.png)
-*Figure 11.1: Dockerfile definition showing base image, curl installation, WAR copy, and container HEALTHCHECK directive.*
+*Figure 11.3: Dockerfile definition showing base image, curl installation, WAR copy, and container HEALTHCHECK directive.*
 
 ![Docker Image Listing and Healthy Container](screenshots/task-11/task-11-container-running.png)
-*Figure 11.2: Docker images listing smartride-app:1.1.0 and running container with healthy status and port 8081 mapping.*
+*Figure 11.4: Docker images listing smartride-app:1.1.0 and running container with healthy status and port 8081 mapping.*
+
+### Supplementary Cross-Stage Evidence
+- **Full Pipeline Stages Success:** See [jenkins-build16-all-stages-success.png](screenshots/task-15/jenkins-build16-all-stages-success.png) in Task 15 showing the green Docker Build & Image Tagging stage.
 
 ---
 
